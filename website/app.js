@@ -1,43 +1,50 @@
-/* Global Variables */
+/* Variables */
+const baseURL = 'http://api.openweathermap.org/data/2.5/weather?zip=';
+const apiKey = '&appid=ebcafb4360283dbfdcc63aaad0a363f9';
 const form = document.querySelector('.app_form');
 const icons = document.querySelectorAll('.entry_icon');
 
-// Base URL and API Key for OpenWeatherMap API
-const baseURL = 'http://api.openweathermap.org/data/2.5/weather?zip=';
-const apiKey = '&appid=ebcafb4360283dbfdcc63aaad0a363f9';
+//Date
+let date = new Date();
+let newDate = date.getMonth() + '.' + date.getDate() + '.' + date.getFullYear();
 
-//Get the date
-let d = new Date();
-let newDate = d.getMonth() + '.' + d.getDate() + '.' + d.getFullYear();
-
-// Event listener to add function to existing HTML DOM element
+// Event listener 
 document.getElementById('generate').addEventListener('click', performAction);
 
-/* Function called by event listener */
 function performAction(e) {
     e.preventDefault();
-    // get user input values
     const newZip = document.getElementById('zip').value;
+    if (newZip === "")
+    {
+        icons.forEach(icon => icon.style.opacity = '1');
+        document.getElementById('date').innerHTML = "ERROR";
+        document.getElementById('temp').innerHTML = "ERROR";
+        document.getElementById('content').innerHTML = "Please Insert new Zip Code.";
+        form.reset();
+        return;
+    }
     const content = document.getElementById('feelings').value;
-    debugger;
     getWeather(baseURL, newZip, apiKey)
-        .then(function(userData) {
-            // add data to POST request
+        .then(function (userData) {
+            if (userData.cod !== 200) {
+                //debugger;
+                icons.forEach(icon => icon.style.opacity = '1');
+                document.getElementById('date').innerHTML = "ERROR";
+                document.getElementById('temp').innerHTML = "ERROR";
+                document.getElementById('content').innerHTML = `ERROR - ${userData.cod} ${userData.message}`;
+                form.reset();
+                return;
+            }
             postData('/add', { date: newDate, temp: userData.main.temp, content });
-        }).then(function() {
-            // call updateUI to update browser content
             updateUI();
         });
-    // reset form
     form.reset();
 }
 
 /* Function to GET Web API Data*/
 const getWeather = async (baseUrl, newZip, apiKey) => {
-    // res equals to the result of fetch function
     const res = await fetch(baseUrl + newZip + apiKey);
     try {
-        // userData equals to the result of fetch function
         const userData = await res.json();
         return userData;
     } catch (error) {
@@ -76,10 +83,9 @@ const postData = async (url = '', data = {}) => {
 const updateUI = async () => {
     const request = await fetch('/all');
     try {
+        //        debugger;
         const allData = await request.json();
-        // show icons on the page
         icons.forEach(icon => icon.style.opacity = '1');
-        // update new entry values
         document.getElementById('date').innerHTML = allData.date;
         document.getElementById('temp').innerHTML = allData.temp;
         document.getElementById('content').innerHTML = allData.content;
