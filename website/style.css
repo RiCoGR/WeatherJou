@@ -147,8 +147,6 @@ body {
 
 #generate {
     background: #225E78;
-    border: 0.2rem solid black;
-    border-radius: 2rem;
     box-shadow: 1rem 1rem 2rem #444;
     color: white;
     cursor: pointer;
