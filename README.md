@@ -16,6 +16,10 @@ This project requires you to create an asynchronous web app that uses Web API an
 You will required Node.js to be installed in your computer. In order to test this project locally, you must follow these steps:
 * In your command line, install all module dependencies with this command
     * `$ npm install`
+* In your command line, install express with this command
+    * `$ npm install express`
+* In your command line, install cors with this command
+    * `$ npm install cors --save`
 * Start server execution
     * `$ node server.js`
 * In a browser go to this URL
